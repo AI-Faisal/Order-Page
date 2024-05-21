@@ -27,18 +27,18 @@ def calculate_courier_charge(weight):
 
 @app.route('/')
 def index():
-    items = data.to_dict(orient='records')
-    return render_template('index.html', items=items)
+    items = data.to_dict(orient='records') # Convert data to a list
+    return render_template('index.html', items=items) # Render the HTML template with the items
 
 @app.route('/place_order', methods=['POST'])
 def place_order():
-    selected_items = request.json['selected_items']
-    items = [data.loc[data['Name'] == item].to_dict(orient='records')[0] for item in selected_items]
+    selected_items = request.json['selected_items'] # Get selected items
+    items = [data.loc[data['Name'] == item].to_dict(orient='records')[0] for item in selected_items] # Get item details
 
-    total_price = sum(item['Price($)'] for item in items)
-    total_weight = sum(item['Weight(g)'] for item in items)
+    total_price = sum(item['Price($)'] for item in items) # Total price cal
+    total_weight = sum(item['Weight(g)'] for item in items) # Total weight cal
 
-    packages = []
+    packages = [] # Empty list to store packages
     if total_price <= 250:
         packages.append({'items': items, 'total_weight': total_weight, 'total_price': total_price, 'courier_charge': calculate_courier_charge(total_weight)})
     else:
@@ -70,4 +70,4 @@ def place_order():
 
 #server = app.server
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True) # Run flask in debug
