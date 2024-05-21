@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetroShop E-Commerce</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .summary-box {
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        .package-summary {
+            margin-top: 10px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Welcome to MetroShop E-Commerce</h1>
+    <form id="order-form">
+        <table>
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Name</th>
+                    <th>Price Per Unit ($)</th>
+                    <th>Weight Per Unit (g)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td><input type="checkbox" name="items" value="{{ item.Name }}"></td>
+                        <td>{{ item.Name }}</td>
+                        <td>${{ item['Price($)'] }}</td>
+                        <td>{{ item['Weight(g)'] }}g</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="button" onclick="placeOrder()">Place Order</button>
+    </form>
+    <div id="order-summaries"></div>
+
+    <script>
+        // Retrieve order counter value from session storage or initialize to 1
+        var orderCounter = sessionStorage.getItem('orderCounter') || 1;
+
+        function placeOrder() {
+            var selectedItems = [];
+            $('input[name="items"]:checked').each(function() {
+                selectedItems.push($(this).val());
+            });
+
+            $.ajax({
+                url: '/place_order',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({selected_items: selectedItems, order_id: orderCounter}),
+                success: function(response) {
+                    var summaryHtml = '<div class="summary-box">';
+                    summaryHtml += '<div class="order-summary">';
+                    summaryHtml += '<h2>Order Summary</h2>';
+                    summaryHtml += '<p>Order ID: ' + orderCounter + '</p>'; // Use orderCounter
+                    summaryHtml += '<p>Total Price: $' + response.total_price + '</p>';
+                    summaryHtml += '<p>Total Weight: ' + response.total_weight + 'g</p>';
+                    summaryHtml += '</div>';
+
+                    response.packages.forEach(function(package, index) {
+                        summaryHtml += '<div class="package-summary">';
+                        summaryHtml += '<h2>Package ' + (index + 1) + '</h2>';
+                        summaryHtml += '<ul>';
+                        package.items.forEach(function(item) {
+                            summaryHtml += '<li>' + item.Name + ' - $' + item['Price($)'] + ' - ' + item['Weight(g)'] + 'g</li>';
+                        });
+                        summaryHtml += '</ul>';
+                        summaryHtml += 'Total Weight: ' + package.total_weight + 'g<br>';
+                        summaryHtml += 'Total Price: $' + package.total_price + '<br>';
+                        summaryHtml += 'Courier Charge: $' + package.courier_charge + '<br>'; // Add courier charge
+                        summaryHtml += '</div>';
+                    });
+
+                    summaryHtml += '</div>';  // Close the summary-box
+                    $('#order-summaries').append(summaryHtml);
+
+                    // Increment order counter and update session storage
+                    orderCounter++;
+                    sessionStorage.setItem('orderCounter', orderCounter);
+
+                    // Clear the selection of checkboxes
+                    $('#order-form')[0].reset();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
