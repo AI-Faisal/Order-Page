@@ -66,6 +66,6 @@ def place_order():
         'packages': packages
     })
 
-server = app.server
+#server = app.server
 if __name__ == '__main__':
     app.run(debug=True)
