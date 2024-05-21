@@ -4,7 +4,7 @@ import os
 import math
 
 app = Flask(__name__)
-server = app.server
+
 
 directory = os.getcwd()
 path = "Test_info.xlsx"
@@ -66,5 +66,6 @@ def place_order():
         'packages': packages
     })
 
+server = app.server
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run(debug=True)
