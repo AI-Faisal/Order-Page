@@ -6,13 +6,15 @@ import math
 app = Flask(__name__)
 
 
+# Locate data
 directory = os.getcwd()
-path = "Test_info.xlsx"
+path = "order_packaging/Test_info.xlsx"
 data = pd.read_excel(path)
 
 # Extract necessary columns
 data = data[['Name', 'Price($)', 'Weight(g)']]
 
+# Weight price range condition
 def calculate_courier_charge(weight):
     if weight <= 200:
         return 5
