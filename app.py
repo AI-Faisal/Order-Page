@@ -5,9 +5,9 @@ import math
 
 app = Flask(__name__)
 
-# Load data
-data_path = ('C:/Users/Faisal El-Muhammady/order_packaging/Test_info.xlsx')
-data = pd.read_excel(data_path)
+directory = os.getcwd()
+path = "order_packaging/Test_info.xlsx"
+data = pd.read_excel(path)
 
 # Extract necessary columns
 data = data[['Name', 'Price($)', 'Weight(g)']]
