@@ -4,6 +4,7 @@ import os
 import math
 
 app = Flask(__name__)
+server = app.server
 
 directory = os.getcwd()
 path = "Test_info.xlsx"
