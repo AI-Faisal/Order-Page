@@ -6,7 +6,7 @@ import math
 app = Flask(__name__)
 
 directory = os.getcwd()
-path = "order_packaging/Test_info.xlsx"
+path = "Test_info.xlsx"
 data = pd.read_excel(path)
 
 # Extract necessary columns
